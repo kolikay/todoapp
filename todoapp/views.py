@@ -19,6 +19,7 @@ class UserProfileViewSet(viewsets.ModelViewSet):
     authentication_classes = (TokenAuthentication,)
     serializer_class  = serializers.UserProfileSerializer
     queryset = models.UserProfile.objects.all()
+     permission_classes = (permissions.UpdateOwnProfile)
    
 
 
@@ -27,7 +28,13 @@ class UserTodoListViewSet(viewsets.ModelViewSet):
     serializer_class = serializers.UserTodoItemsSerializers
     queryset = models.UserTodoList.objects.all()
     authentication_classes = (TokenAuthentication,)
-    permission_classes = (IsAuthenticated,)
+    permission_classes = (IsAuthenticated, permissions.UpdateOwnStatus)
+
+
+    
+    def perform_create(self, serializer):
+        """sets the user profile to the logged in user"""
+        serializer.save(user_profile=self.request.user)
 
 
 
